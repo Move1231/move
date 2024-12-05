@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บันทึกรายรับ-รายจ่าย</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>💖 บันทึกรายรับ - รายจ่าย 💸</h1>
+    <form id="budgetForm">
+      <div class="form-group">
+        <label for="date">📅 วันที่:</label>
+        <input type="date" id="date" required>
+      </div>
+      <div class="form-group">
+        <label for="detail">📝 รายการ:</label>
+        <input type="text" id="detail" placeholder="ระบุรายการ" required>
+      </div>
+      <div class="form-group">
+        <label for="income">💰 รายรับ:</label>
+        <input type="number" id="income" placeholder="ระบุจำนวนเงิน (บาท)" min="0">
+      </div>
+      <div class="form-group">
+        <label for="expense">💸 รายจ่าย:</label>
+        <input type="number" id="expense" placeholder="ระบุจำนวนเงิน (บาท)" min="0">
+      </div>
+      <div class="form-group">
+        <label for="balance">💼 คงเหลือ:</label>
+        <input type="number" id="balance" placeholder="ระบุยอดคงเหลือ (บาท)" required>
+      </div>
+      <button type="submit" class="submit-btn">บันทึก</button>
+    </form>
+    <p id="responseMessage" class="response"></p>
+  </div>
+  <script>
+    const scriptURL = 'YOUR_WEB_APP_URL_HERE'; // แทนที่ด้วย URL Web App ที่คัดลอกมา
+
+    document.getElementById('budgetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById('date').value;
+      const detail = document.getElementById('detail').value;
+      const income = document.getElementById('income').value || 0;
+      const expense = document.getElementById('expense').value || 0;
+      const balance = document.getElementById('balance').value;
+
+      const responseMessage = document.getElementById('responseMessage');
+      responseMessage.textContent = "กำลังบันทึกข้อมูล...";
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify({ date, detail, income, expense, balance }),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        const result = await response.text();
+        responseMessage.textContent = result === 'Success' ? 'บันทึกสำเร็จ!' : 'เกิดข้อผิดพลาด!';
+        e.target.reset();
+      } catch (error) {
+        responseMessage.textContent = 'เกิดข้อผิดพลาดในการส่งข้อมูล!';
+      }
+    });
+  </script>
+</body>
+</html>
